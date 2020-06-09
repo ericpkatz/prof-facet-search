@@ -16,7 +16,7 @@ async function seed() {
     Product.create({ name: 'foo', inStock: false, rating: 'MEH'}),
     Product.create({ name: 'bar', inStock: true, rating: 'GREAT'}),
     Product.create({ name: 'bazz', inStock: true, rating: 'GOOD'}),
-    Product.create({ name: 'quq', inStock: false, rating: 'MEH'}),
+    Product.create({ name: 'quq', rating: 'MEH'}),
     Product.create({ name: 'fred', rating: 'GREAT'}),
     Product.create({ name: 'plob', rating: 'GOOD'}),
   ]);
