@@ -2,11 +2,24 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 
-const Products = ({products, filter, history}) => {
+const Products = ({products, filter, history, filtered}) => {
+  console.log(filter);
   const search = (ev)=> {
-    console.log(ev.target);
+
+    const _filter = {...filter };
+    if(ev.target.value){
+      if(ev.target.getAttribute('data-type') === 'boolean'){
+        _filter[ev.target.name] = ev.target.value === 'true' ? true : false;
+      }
+      else {
+        _filter[ev.target.name] = ev.target.value;
+      }
+    }
+    else {
+      delete _filter[ev.target.name];
+    }
+    history.push(`/products/${JSON.stringify(_filter)}`);
   }
-  let filtered = products;
   return (
     <div>
       <h1>Products ({ filtered.length})</h1>
@@ -14,13 +27,13 @@ const Products = ({products, filter, history}) => {
         Showing { filtered.length } out of { products.length }
       </div>
 
-      <select onChange={ search } name='inStock'>
+      <select value={ filter.inStock === undefined ? '' : filter.inStock } onChange={ search } name='inStock' data-type='boolean'>
         <option value=''>All</option>
         <option value='true'>In Stock</option>
         <option value='false'>Out of Stock</option>
       </select>
 
-      <select onChange={ search } name='rating'>
+      <select value={filter.rating === undefined ? '' : filter.rating} onChange={ search } name='rating'>
         <option value=''>All</option>
         <option>GREAT</option>
         <option>GOOD</option>
@@ -50,8 +63,17 @@ const Products = ({products, filter, history}) => {
  */
 const mapState = (state, { match }) => {
   const filter = JSON.parse(match.params.filter || '{}'); 
+  let filtered = state.products;
+
+  if(filter.rating){
+    filtered = filtered.filter( product => product.rating === filter.rating);
+  }
+  if(filter.inStock !== undefined){
+    filtered = filtered.filter( product => product.inStock === filter.inStock);
+  }
   return {
     products: state.products,
+    filtered,
     filter
   }
 }
