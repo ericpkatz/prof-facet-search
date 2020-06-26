@@ -2,6 +2,7 @@
 
 const db = require('../server/db')
 const {User, Product} = require('../server/db/models')
+const faker = require('faker')
 
 async function seed() {
   await db.sync({force: true})
@@ -12,14 +13,23 @@ async function seed() {
     User.create({email: 'murphy@email.com', password: '123'})
   ])
 
-  const products = await Promise.all([
-    Product.create({ name: 'foo', inStock: false, rating: 'MEH'}),
-    Product.create({ name: 'bar', inStock: true, rating: 'GREAT'}),
-    Product.create({ name: 'bazz', inStock: true, rating: 'GOOD'}),
-    Product.create({ name: 'quq', rating: 'MEH'}),
-    Product.create({ name: 'fred', rating: 'GREAT'}),
-    Product.create({ name: 'plob', rating: 'GOOD'}),
-  ]);
+  const products = []
+  const ratings = ['MEH', 'GREAT', 'GOOD', 'GOOD', 'GOOD']
+
+  while (products.length < 1000) {
+    const rating = faker.random.arrayElement(ratings)
+    products.push(
+      Product.create({
+        rating,
+        inStock:
+          rating === 'GREAT'
+            ? false
+            : faker.random.arrayElement([true, true, true, false]),
+        name: `${faker.commerce.productAdjective()} ${faker.commerce.productName()}`
+      })
+    )
+  }
+  await Promise.all(products)
 
   console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)

@@ -50,7 +50,7 @@ const mapDispatch = dispatch => {
   return {
     loadInitialData() {
       dispatch(me())
-      dispatch(getProducts())
+      //dispatch(getProducts())
     }
   }
 }
